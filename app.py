@@ -6,6 +6,7 @@ from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import SlideTransition
+from kivy.uix.spinner import Spinner
 from kivy.core.window import Window
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.image import Image
@@ -14,7 +15,7 @@ Window.fullscreen = False
 Window.size = (800, 480)
 
 blottotron = Blottotron()
-ingredients_list = [Ingredient(name='Vodka'), Ingredient(name='Orange Juice')]
+ingredients_list = [None, Ingredient(name='Vodka'), Ingredient(name='Orange Juice')]
 
 
 class MasterLayout(BoxLayout):
@@ -141,41 +142,62 @@ class IngredientsMenu(BlottotronScreen):
         super().__init__()
         self.name = 'ingredients'
         self.ingredient_buttons = []
+        self.ingredients_list = []
         self.layout = BoxLayout()
         self.layout.orientation = 'vertical'
         self.layout.padding = '30dp'
         self.layout.spacing = '20dp'
         self.layout.size_hint_y = None
-        self.layout.height = self.layout.minimum_height
+        for ingredient in ingredients_list:
+            if ingredient is None:
+                self.ingredients_list.append(
+                    'None'
+                )
+            else:
+                self.ingredients_list.append(
+                    ingredient.name
+                )
+
         for i in range(0, 10):
             try:
-                self.ingredient_buttons.append(Button(
+                self.ingredient_buttons.append(Spinner(
                     text='Ingredient ' + str(i + 1) + ': ' + blottotron.bar[i].name,
-                    size_hint=(None, None),
-                    size=(400, 50),
-                    font_size=20
-                )
+                    size_hint_y=None,
+                    height=50,
+                    font_size=20,
+                    values=self.ingredients_list,
+                    )
                 )
             except IndexError:
-                self.ingredient_buttons.append(Button(
-                    text='Ingredient ' + str(i) + ': None',
-                    font_size=20,
-                    size_hint=(None, None),
-                    size=(400, 50),
+                self.ingredient_buttons.append(Spinner(
+                    text='Ingredient ' + str(i + 1) + ': None',
+                    size_hint_y=None,
+                    height="40dp",
+                    values=self.ingredients_list,
+                    )
                 )
-                )
-        self.scroll_view = ScrollView(size_hint=(1, None), size=self.layout.size)
-        self.scroll_view.do_scroll_x = False
-        self.scroll_view.do_scroll_y = True
-        self.add_widget(self.scroll_view)
-        self.scroll_view.add_widget(self.layout)
+            self.ingredient_buttons[i].bind(text=lambda: self.update_spinner_text)
         for button in self.ingredient_buttons:
             self.layout.add_widget(button)
+        self.layout.height = 620
+        self.scroll_view = ScrollView()
+        self.scroll_view.do_scroll_x = False
+        self.add_widget(self.scroll_view)
+        self.scroll_view.add_widget(self.layout)
+
+    def update_spinner_text(self, number, _=None):
+        selection_text = "Ingredient " + str(number) + ": " + self.ingredient_buttons[number].text
+        self.ingredient_buttons[number].text = selection_text
+        print("UPDATE")
+
+
+
 
 
 class BlottotronApp(App):
     def build(self):
-        return MasterLayout()
+        master_layout = MasterLayout()
+        return master_layout
 
 
 def main():
