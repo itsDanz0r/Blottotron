@@ -49,7 +49,7 @@ class MasterLayout(BoxLayout):
         self.heading = Label(
             text='BLOTTOTRON',
             font_size='40',
-            # font_name='Ethnocentric Rg',
+            font_name='Ethnocentric Rg',
             size_hint_y=0.2
         )
         self.bar_label = Label(
@@ -95,8 +95,8 @@ class BlottotronScreen(Screen):
         super().__init__()
         self.layout = BoxLayout()
         self.layout.orientation = 'horizontal'
-        self.layout.padding = '50dp'
-        self.layout.spacing = '30dp'
+        self.layout.padding = '40dp'
+        self.layout.spacing = '70dp'
 
         self.widgets = []
         self.add_widget(self.layout)
@@ -112,7 +112,7 @@ class MenuButton(Button):
         self.halign = 'center'
         self.font_size = 25
         self.size_hint = (None, None)
-        self.size = (210, 210)
+        self.size = (260, 210)
 
 
 class MainMenu(BlottotronScreen):
@@ -120,13 +120,15 @@ class MainMenu(BlottotronScreen):
         super().__init__()
         self.name = 'main'
         self.size_hint_y = 0.5
-        self.layout.
+
         self.pour_button = MenuButton(
             text='\n\nDRINK',
+            pos_hint={'x': 0.5}
         )
 
         self.settings_button = MenuButton(
             text='\n\nSETUP',
+            pos_hint={'x': 0.6},
             on_press=self.settings_clicked
         )
 
@@ -248,11 +250,9 @@ class IngredientsMenu(BlottotronScreen):
         for index, spinner in enumerate(self.ingredient_buttons):
             if spinner.text in self.ingredients_list:
                 blottotron.bar[index] = Ingredient(name=spinner.text)
+        self.parent.transition = SlideTransition(direction='right')
         self.parent.current = 'main'
         self.parent.parent.update_bar_label()
-
-
-
 
 
 class BlottotronApp(App):
