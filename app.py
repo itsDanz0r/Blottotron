@@ -1,5 +1,4 @@
 from hardware_classes import *
-import kivy
 from kivy.app import App
 from kivy.uix.button import Button
 from kivy.uix.label import Label
@@ -7,7 +6,6 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.slider import Slider
-from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.screenmanager import SlideTransition
 from kivy.uix.spinner import Spinner
 from kivy.core.window import Window
@@ -97,7 +95,7 @@ class MenuButton(Button):
 
 class MainMenu(BlottotronScreen):
     def __init__(self, **kwargs):
-        super().__init__()
+        super().__init__(**kwargs)
         self.name = 'main'
         self.size_hint_y = 0.5
 
@@ -134,7 +132,6 @@ class MainMenu(BlottotronScreen):
         self.settings_icon.x = self.settings_button.x + 542
         self.settings_icon.y = self.settings_button.y + 125
 
-
     def settings_clicked(self, _=None):
         self.parent.transition = SlideTransition(direction='left')
         self.parent.current = 'settings'
@@ -143,7 +140,7 @@ class MainMenu(BlottotronScreen):
 class SettingsMenu(BlottotronScreen):
 
     def __init__(self, **kwargs):
-        super().__init__()
+        super().__init__(**kwargs)
         self.heading = Label(
             text='BLOTTOTRON',
             font_size='50',
@@ -192,12 +189,23 @@ class SettingsMenu(BlottotronScreen):
 
 class IngredientsMenu(BlottotronScreen):
     def __init__(self, **kwargs):
-        super().__init__()
+        super().__init__(**kwargs)
         self.name = 'ingredients'
         self.ingredient_buttons = []
         self.ingredients_list = []
         self.sliders = []
         self.scroll_view = ScrollView()
+
+        self.ingredient_label = Label(
+            text='Ingredient'
+        )
+        self.volume_label = Label(
+            text='Volume'
+        )
+        self.remaining_label = Label(
+            text='Amount Remaining'
+        )
+
         self.setup_layout()
         self.populate_ingredients_list()
         self.setup_labels()
@@ -213,7 +221,6 @@ class IngredientsMenu(BlottotronScreen):
         self.layout.size_hint_y = None
         self.layout.height = 720
 
-
     def populate_ingredients_list(self):
         for ingredient in ingredients_list:
             if ingredient is None:
@@ -228,19 +235,9 @@ class IngredientsMenu(BlottotronScreen):
     def setup_scrolling(self):
         self.scroll_view.do_scroll_x = False
         self.add_widget(self.scroll_view)
-
         self.scroll_view.add_widget(self.layout)
 
     def setup_labels(self):
-        self.ingredient_label = Label(
-            text='Ingredient'
-        )
-        self.volume_label = Label(
-            text='Volume'
-        )
-        self.remaining_label = Label(
-            text='Amount Remaining'
-        )
         self.layout.add_widget(self.ingredient_label)
         self.layout.add_widget(self.volume_label)
         self.layout.add_widget(self.remaining_label)
