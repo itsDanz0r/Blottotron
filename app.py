@@ -47,26 +47,14 @@ class MasterLayout(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.heading = Label(
-            text='BLOTTOTRON',
-            font_size='40',
-            font_name='Ethnocentric Rg',
-            size_hint_y=0.2
+            text='\n\nBLOTTOTRON',
+            font_size='50',
+            font_name='Ethnocentric (Turbo Covers)',
+            size_hint_y=0.2,
+            pos_hint={'y':0.3}
         )
-        self.bar_label = Label(
-            text="Your Bar:\n\nSetup Required",
-            font_size="20",
-            halign='center',
-            size_hint_y=0.3
-        )
-        self.cocktail_number_label = Label(
-            text="\nNo drinks available",
-            font_size="20",
-            halign='center',
-            size_hint_y=0.3
-        )
+
         self.add_widget(self.heading)
-        self.add_widget(self.bar_label)
-        self.add_widget(self.cocktail_number_label)
         self.orientation = 'vertical'
         self.screen_manager = ScreenManager()
         self.add_screens()
@@ -78,24 +66,13 @@ class MasterLayout(BoxLayout):
         self.screen_manager.add_widget(IngredientsMenu(parent=self.screen_manager))
         self.screen_manager.current = 'main'
 
-    def update_bar_label(self):
-        bar_string = 'Your Bar:\n\n'
-        if not blottotron.bar:
-            bar_string += 'Empty'
-        for ingredient in blottotron.bar:
-            if ingredient is None:
-                continue
-            bar_string += ingredient.name + ' '
-        bar_string.strip()
-        self.bar_label.text = bar_string
-
 
 class BlottotronScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__()
         self.layout = BoxLayout()
         self.layout.orientation = 'horizontal'
-        self.layout.padding = '40dp'
+        self.layout.padding = [75, 0, 75, 40]
         self.layout.spacing = '70dp'
 
         self.widgets = []
@@ -112,7 +89,8 @@ class MenuButton(Button):
         self.halign = 'center'
         self.font_size = 25
         self.size_hint = (None, None)
-        self.size = (260, 210)
+        self.size = (300, 210)
+        self.font_name = 'Minimalust Regular'
 
 
 class MainMenu(BlottotronScreen):
@@ -122,21 +100,38 @@ class MainMenu(BlottotronScreen):
         self.size_hint_y = 0.5
 
         self.pour_button = MenuButton(
-            text='\n\nDRINK',
-            pos_hint={'x': 0.5}
+            text='\n\n\n\ndrink',
         )
 
         self.settings_button = MenuButton(
-            text='\n\nSETUP',
-            pos_hint={'x': 0.6},
+            text='\n\n\n\nsetup',
             on_press=self.settings_clicked
+        )
+
+        self.pour_icon = Image(
+            source='./img/cocktail_icon.png',
+        )
+
+        self.settings_icon = Image(
+            source='./img/settings_icon.png',
         )
 
         self.widgets = [
             self.pour_button,
-            self.settings_button
+            self.settings_button,
         ]
         self.add_widgets_to_layout()
+        self.place_button_icons()
+
+    def place_button_icons(self):
+        self.pour_button.add_widget(self.pour_icon)
+        self.pour_icon.x = self.pour_button.x + 178
+        self.pour_icon.y = self.pour_button.y + 125
+
+        self.settings_button.add_widget(self.settings_icon)
+        self.settings_icon.x = self.settings_button.x + 542
+        self.settings_icon.y = self.settings_button.y + 125
+
 
     def settings_clicked(self, _=None):
         self.parent.transition = SlideTransition(direction='left')
@@ -149,18 +144,25 @@ class SettingsMenu(BlottotronScreen):
         super().__init__()
         self.name = 'settings'
         self.ingredients_button = MenuButton(
-            text='SELECT\nINGREDIENTS',
+            text='\n\n\n\ningredients',
             on_release=self.ingredients_menu_clicked
         )
         self.back_button = MenuButton(
-            text='RETURN TO\nMENU',
+            text='\n\n\n\nmenu',
             on_release=self.main_menu_clicked
+        )
+        self.back_icon = Image(
+            source='./img/back_icon.png'
+        )
+        self.ingredients_icon = Image(
+            source='./img/ingredients_icon.png'
         )
         self.widgets = [
             self.ingredients_button,
             self.back_button
         ]
         self.add_widgets_to_layout()
+        self.place_button_icons()
 
     def main_menu_clicked(self, _=None):
         self.parent.transition = SlideTransition(direction='right')
@@ -168,6 +170,15 @@ class SettingsMenu(BlottotronScreen):
 
     def ingredients_menu_clicked(self, _=None):
         self.parent.current = 'ingredients'
+
+    def place_button_icons(self):
+        self.ingredients_button.add_widget(self.ingredients_icon)
+        self.ingredients_icon.x = self.ingredients_button.x + 178
+        self.ingredients_icon.y = self.ingredients_button.y + 125
+
+        self.back_button.add_widget(self.back_icon)
+        self.back_icon.x = self.back_button.x + 542
+        self.back_icon.y = self.back_button.y + 125
 
 
 class IngredientsMenu(BlottotronScreen):
@@ -188,7 +199,7 @@ class IngredientsMenu(BlottotronScreen):
         self.layout.padding = '30dp'
         self.layout.spacing = '20dp'
         self.layout.size_hint_y = None
-        self.layout.height = 660
+        self.layout.height = 720
 
     def populate_ingredients_list(self):
         for ingredient in ingredients_list:
@@ -252,7 +263,6 @@ class IngredientsMenu(BlottotronScreen):
                 blottotron.bar[index] = Ingredient(name=spinner.text)
         self.parent.transition = SlideTransition(direction='right')
         self.parent.current = 'main'
-        self.parent.parent.update_bar_label()
 
 
 class BlottotronApp(App):

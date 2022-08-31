@@ -1,11 +1,15 @@
 import sqlite3
-#import RPi.GPIO as GPIO
 import time
+
+try:
+    import RPi.GPIO as GPIO
+except:
+    import Mock.GPIO as GPIO
 
 
 class Blottotron:
     def __init__(self):
-        #GPIO.setmode(GPIO.BOARD)
+        GPIO.setmode(GPIO.BOARD)
         self.bar = []
 
     def setup_bar(self, ingredients_list):
@@ -57,9 +61,9 @@ class Ingredient:
 class Pump:
     def __init__(self, pwm_pin):
         self.speed = 255
-        #GPIO.setup(pwm_pin, GPIO.OUT)
+        GPIO.setup(pwm_pin, GPIO.OUT)
         self.pwm_pin = pwm_pin
-        #self.pwm = GPIO.PWM(self.pwm_pin, 490)
+        self.pwm = GPIO.PWM(self.pwm_pin, 490)
 
     def run_pump(self, run_time):
         start_time = time.time()
